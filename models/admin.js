@@ -8,11 +8,27 @@ class Admin {
   static async inicializar() {
     try {
       await fs.access(ADMINS_FILE);
+      const data = await fs.readFile(ADMINS_FILE, "utf8");
+      const admins = JSON.parse(data);
+
+      if (admins.length === 0) {
+        console.log(
+          "Nenhum administrador encontrado. Criando administrador padrão..."
+        );
+        const adminPadrao = await this.criarAdminPadrao();
+        await fs.writeFile(ADMINS_FILE, JSON.stringify([adminPadrao], null, 2));
+        console.log("Administrador padrão criado com sucesso.");
+      }
     } catch {
+      console.log(
+        "Arquivo de administradores não encontrado. Criando um novo..."
+      );
       const adminPadrao = await this.criarAdminPadrao();
       await fs.writeFile(ADMINS_FILE, JSON.stringify([adminPadrao], null, 2));
+      console.log("Administrador padrão criado com sucesso.");
     }
   }
+
   static async criarAdminPadrao() {
     const bcrypt = require("bcryptjs");
     const senhaCriptografada = await bcrypt.hash("admin123", 10);
@@ -27,8 +43,13 @@ class Admin {
   }
 
   static async buscarTodos() {
-    const data = await fs.readFile(ADMINS_FILE, "utf8");
-    return JSON.parse(data);
+    try {
+      const data = await fs.readFile(ADMINS_FILE, "utf8");
+      return JSON.parse(data);
+    } catch (error) {
+      console.error("Erro ao buscar administradores:", error);
+      return [];
+    }
   }
 
   static async criar({ nome, email, senha }) {
@@ -58,6 +79,13 @@ class Admin {
 
   static async buscarPorEmail(email) {
     const admins = await this.buscarTodos();
+
+    if (!Array.isArray(admins)) {
+      throw new Error(
+        "Formato inválido de dados no arquivo de administradores."
+      );
+    }
+
     return admins.find((admin) => admin.email === email);
   }
 
