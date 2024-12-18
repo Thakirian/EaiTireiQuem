@@ -1,7 +1,7 @@
 const fs = require("fs").promises;
 const path = require("path");
 
-const ARQUIVO_GRUPOS = path.join(__dirname, "../data/grupos.json");
+const ARQUIVO_GRUPOS = path.join(__dirname, "../data/groups.json");
 
 class Grupo {
   static async inicializar() {
