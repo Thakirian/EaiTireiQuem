@@ -79,7 +79,24 @@ const obterListaDesejosPorUsuario = async (req, res) => {
         .json({ error: "Lista de desejos não encontrada." });
     }
 
-    res.status(200).json(listaDesejos);
+    const limite = parseInt(req.query.limite) || 10;
+    const pagina = parseInt(req.query.pagina) || 1;
+
+    if (![5, 10, 30].includes(limite)) {
+      return res.status(400).json({ error: "O limite deve ser 5, 10 ou 30." });
+    }
+
+    const inicio = (pagina - 1) * limite;
+    const fim = inicio + limite;
+
+    const itensPaginados = listaDesejos.items.slice(inicio, fim);
+
+    res.status(200).json({
+      total: listaDesejos.items.length,
+      paginaAtual: pagina,
+      limite,
+      dados: itensPaginados,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

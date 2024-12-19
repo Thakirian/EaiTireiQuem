@@ -91,8 +91,25 @@ async function obterResultadosSorteio(req, res) {
 
 async function obterGruposUsuario(req, res) {
   try {
-    const grupos = await Group.buscarTodos(req.user.id);
-    res.json(grupos);
+    const grupos = await Group.buscarGruposDoUsuario(req.user.id);
+    const limite = parseInt(req.query.limite) || 10;
+    const pagina = parseInt(req.query.pagina) || 1;
+
+    if (![5, 10, 30].includes(limite)) {
+      return res.status(400).json({ error: "O limite deve ser 5, 10 ou 30." });
+    }
+
+    const inicio = (pagina - 1) * limite;
+    const fim = inicio + limite;
+
+    const gruposPaginados = grupos.slice(inicio, fim);
+
+    res.json({
+      total: grupos.length,
+      paginaAtual: pagina,
+      limite,
+      dados: gruposPaginados,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -101,7 +118,24 @@ async function obterGruposUsuario(req, res) {
 async function listarTodosGrupos(req, res) {
   try {
     const grupos = await Group.buscarTodos();
-    res.status(200).json(grupos);
+    const limite = parseInt(req.query.limite) || 10;
+    const pagina = parseInt(req.query.pagina) || 1;
+
+    if (![5, 10, 30].includes(limite)) {
+      return res.status(400).json({ error: "O limite deve ser 5, 10 ou 30." });
+    }
+
+    const inicio = (pagina - 1) * limite;
+    const fim = inicio + limite;
+
+    const gruposPaginados = grupos.slice(inicio, fim);
+
+    res.json({
+      total: grupos.length,
+      paginaAtual: pagina,
+      limite,
+      dados: gruposPaginados,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
