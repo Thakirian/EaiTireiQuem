@@ -54,8 +54,8 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "nome": { "type": "string", "example": "João" },
-                  "email": { "type": "string", "example": "joao@gmail.com" },
+                  "nome": { "type": "string", "example": "Ana" },
+                  "email": { "type": "string", "example": "Ana" },
                   "senha": { "type": "string", "example": "senha123" }
                 }
               }
@@ -68,6 +68,59 @@
           },
           "400": {
             "description": "Erro de validação"
+          },
+          "500": {
+            "description": "Erro interno"
+          }
+        }
+      }
+    },
+    "/usuarios/atualizar": {
+      "patch": {
+        "summary": "Editar dados do usuário",
+        "description": "Permite ao usuário editar seus próprios dados pessoais. Administradores podem editar dados de outros usuários.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nome": {
+                    "type": "string",
+                    "example": "Ana Atualizado",
+                    "description": "Novo nome do usuário"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "ana.atualizado@gmail.com",
+                    "description": "Novo email do usuário"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Dados do usuário atualizados com sucesso"
+          },
+          "400": {
+            "description": "Erro de validação ou nenhum dado fornecido"
+          },
+          "401": {
+            "description": "Token não fornecido ou inválido"
+          },
+          "403": {
+            "description": "Acesso não autorizado"
+          },
+          "404": {
+            "description": "Usuário não encontrado"
           },
           "500": {
             "description": "Erro interno"

@@ -1,1 +1,10 @@
-[]
+[
+  {
+    "id": "29f66a10-5347-467b-9256-59d1914d0727",
+    "nome": "admin",
+    "email": "admin@gmail.com",
+    "senha": "$2a$10$xQQQQrWPmsXV257wIgnC4eOFTWGy.7RdKWGY6wMzfQ2sGWQhQeTW2",
+    "papel": "admin",
+    "criadoEm": "2024-12-18T18:12:57.650Z"
+  }
+]
