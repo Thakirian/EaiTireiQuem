@@ -34,7 +34,7 @@ class User {
     const senhaCriptografada = await bcrypt.hash(senha, 10);
 
     const novoUser = {
-      id: counter, 
+      id: counter,
       nome,
       email,
       senha: senhaCriptografada,
@@ -45,10 +45,27 @@ class User {
     users.push(novoUser);
     await this.salvarTodos({ counter: counter + 1, users });
 
-    const { senha: _, ...userSemSenha } = novoUser; 
+    const { senha: _, ...userSemSenha } = novoUser;
     return userSemSenha;
   }
+  static async atualizar(id, novosDados) {
+    const data = await fs.readFile(USERS_FILE, "utf8");
+    const { users } = JSON.parse(data);
 
+    const index = users.findIndex((user) => user.id === id);
+
+    if (index === -1) throw new Error("Usuário não encontrado.");
+
+    users[index] = {
+      ...users[index],
+      ...novosDados,
+      atualizadoEm: new Date().toISOString(),
+    };
+
+    await fs.writeFile(USERS_FILE, JSON.stringify({ users }, null, 2));
+
+    return users[index];
+  }
   static async buscarPorEmail(email) {
     const data = await fs.readFile(USERS_FILE, "utf8");
     const { users } = JSON.parse(data);
