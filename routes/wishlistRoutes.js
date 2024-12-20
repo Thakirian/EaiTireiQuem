@@ -28,13 +28,13 @@ router.post("/", auth, wishlistController.criarWishlist);
  *                   properties:
  *                     name:
  *                       type: string
- *                       example: "Notebook"
+ *                       example: "Perfume"
  *                     description:
  *                       type: string
- *                       example: "Um notebook de alta performance"
+ *                       example: "Um perfume da Natura"
  *                     price:
  *                       type: number
- *                       example: 5000.0
+ *                       example: 100.0
  *     responses:
  *       201:
  *         description: Lista de desejos criada com sucesso.
@@ -176,12 +176,61 @@ router.get("/usuario", auth, wishlistController.obterListaDesejosPorUsuario);
  * /api/wishlists/usuario:
  *   get:
  *     summary: Obter a lista de desejos de um usuário
- *     description: Retorna a lista de desejos vinculada ao usuário autenticado.
+ *     description: Retorna a lista de desejos paginada vinculada ao usuário autenticado.
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: limite
+ *         schema:
+ *           type: integer
+ *           enum: [5, 10, 30]
+ *           default: 10
+ *         description: Número de itens por página (5, 10 ou 30)
+ *       - in: query
+ *         name: pagina
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *         description: Número da página a ser retornada
  *     responses:
  *       200:
  *         description: Lista de desejos recuperada com sucesso.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 total:
+ *                   type: integer
+ *                   description: Número total de itens
+ *                   example: 25
+ *                 paginaAtual:
+ *                   type: integer
+ *                   description: Página atual
+ *                   example: 1
+ *                 limite:
+ *                   type: integer
+ *                   description: Número de itens por página
+ *                   example: 10
+ *                 dados:
+ *                   type: array
+ *                   description: Array de itens da lista de desejos
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                         example: "Notebook"
+ *                       description:
+ *                         type: string
+ *                         example: "Um notebook de alta performance"
+ *                       price:
+ *                         type: number
+ *                         example: 5000.0
+ *       400:
+ *         description: Limite de itens por página inválido.
  *       401:
  *         description: Token não fornecido ou inválido.
  *       404:
